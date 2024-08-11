@@ -13,8 +13,13 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { signIn, signUp } from "../../redux/features/auth";
 
 const LoginSignUpCard = () => {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
 
@@ -48,6 +53,8 @@ const LoginSignUpCard = () => {
     validationSchema: isSignup && validationSchema,
     onSubmit: (values) => {
       console.log(values);
+
+      !isSignup ? dispatch(signIn(values)) : dispatch(signUp(values));
     },
   });
 
@@ -59,6 +66,7 @@ const LoginSignUpCard = () => {
       justifyContent="center"
       alignItems="center"
     >
+      <Typography>{error}</Typography>
       <Card
         elevation={5}
         sx={{
@@ -168,7 +176,7 @@ const LoginSignUpCard = () => {
                   fullWidth
                   type="submit"
                 >
-                  {!isSignup ? "Login" : "Signup"}
+                  {loading ? "loading..." : !isSignup ? "Login" : "Signup"}
                 </Button>
                 <Typography
                   sx={{ cursor: "pointer" }}
